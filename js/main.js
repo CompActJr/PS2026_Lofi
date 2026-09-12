@@ -199,7 +199,7 @@
     'run-parkinsons': {
       tag: 'Participação',
       title: 'Run for Parkinson\u2019s',
-      desc: 'Organização e promoção do SESC Azenha \u2014 participação da MOVA com recovery esportivo.',
+      desc: 'Organização e promoção do SESC Azenha, com participação da MOVA em recovery esportivo.',
       images: [
         'assets/images/eventos/run-parkinsons/run-parkinsons-1.jpg',
         'assets/images/eventos/run-parkinsons/run-parkinsons-2.jpg',
@@ -326,19 +326,17 @@
   years.forEach((y) => {
     const chip = document.createElement('button');
     chip.type = 'button';
-    chip.className = 'year-chip idle';
+    chip.className = y === CURRENT_YEAR ? 'year-chip active' : 'year-chip idle';
     chip.textContent = String(y);
     chip.setAttribute('role', 'tab');
-    chip.setAttribute('aria-selected', 'false');
+    chip.setAttribute('aria-selected', String(y === CURRENT_YEAR));
     chip.addEventListener('click', () => selectYear(y));
     chipsWrap.appendChild(chip);
-if (y === CURRENT_YEAR) chip.classList.add('active');
   });
 
   function selectYear(y) {
     if (y === historyYear) return;
     historyYear = y;
-    historyPhoto.style.opacity = '0';
     historyPhoto.style.opacity = '0';
     $$('.year-chip', chipsWrap).forEach((c) => {
       const active = Number(c.textContent) === y;
