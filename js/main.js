@@ -44,6 +44,43 @@
     revealEls.forEach((el) => el.classList.add('visible'));
   }
 
+  const statEls = $$('.stat-value');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const countUp = (el) => {
+    const target = parseInt(el.dataset.target, 10);
+    if (prefersReducedMotion || !Number.isFinite(target)) {
+      el.textContent = String(target || 0);
+      return;
+    }
+    const duration = 1000;
+    const start = performance.now();
+    const frame = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(target * eased);
+      if (t < 1) requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  };
+  if (statEls.length) {
+    if ('IntersectionObserver' in window) {
+      const statIO = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              countUp(entry.target);
+              statIO.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.4 }
+      );
+      statEls.forEach((el) => statIO.observe(el));
+    } else {
+      statEls.forEach((el) => countUp(el));
+    }
+  }
+
   const GAP_REM = 1;
   const visibleCount = () =>
     window.innerWidth < 640 ? 1
