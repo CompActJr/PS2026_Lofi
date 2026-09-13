@@ -87,18 +87,54 @@
       : window.innerWidth < 900 ? 2
       : window.innerWidth < 1150 ? 3 : 4;
 
-  $$('.carousel-block').forEach((block) => {
+  const escapeHtml = (str) => {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  };
+
+  const formatPhotoUrl = (url) => {
+    if (!url || typeof url !== 'string') return '';
+    const trimmed = url.trim();
+    if (!trimmed) return '';
+
+    const gdFileMatch = trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (gdFileMatch && gdFileMatch[1]) {
+      return `https://drive.google.com/thumbnail?id=${gdFileMatch[1]}&sz=w500`;
+    }
+    const gdIdMatch = trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (gdIdMatch && gdIdMatch[1]) {
+      return `https://drive.google.com/thumbnail?id=${gdIdMatch[1]}&sz=w500`;
+    }
+
+    return trimmed;
+  };
+
+  const initCarousel = (block) => {
     const track = $('.carousel-track', block);
+    if (!track) return;
     const items = $$('.carousel-item', track);
     const prev = $('[data-prev]', block);
     const next = $('[data-next]', block);
     const dotsWrap = $('.carousel-dots', block);
     let idx = 0;
-    let visible = Math.min(visibleCount(), items.length);
+
+    const getVisible = () => Math.min(visibleCount(), items.length || 1);
+    let visible = getVisible();
 
     const renderDots = () => {
+      if (!dotsWrap) return;
       dotsWrap.innerHTML = '';
       const count = Math.max(0, items.length - visible) + 1;
+      if (count <= 1) {
+        dotsWrap.style.display = 'none';
+        return;
+      }
+      dotsWrap.style.display = 'flex';
       for (let i = 0; i < count; i++) {
         const d = document.createElement('span');
         d.className = i === idx ? 'dot active' : 'dot idle';
@@ -107,7 +143,7 @@
     };
 
     const layout = () => {
-      const v = Math.min(visibleCount(), items.length);
+      const v = getVisible();
       if (v !== visible) {
         visible = v;
         idx = Math.min(idx, Math.max(0, items.length - visible));
@@ -121,13 +157,45 @@
       const max = Math.max(0, items.length - visible);
       idx = Math.max(0, Math.min(idx, max));
       track.style.transform = `translateX(calc(-${idx} * ((100% + ${GAP_REM}rem) / ${visible})))`;
-      prev.disabled = idx === 0;
-      next.disabled = idx === max;
+      if (prev) prev.disabled = idx === 0;
+      if (next) next.disabled = idx === max;
       renderDots();
     };
 
-    prev.addEventListener('click', () => { idx -= 1; move(); });
-    next.addEventListener('click', () => { idx += 1; move(); });
+    if (prev) prev.addEventListener('click', () => { idx -= 1; move(); });
+    if (next) next.addEventListener('click', () => { idx += 1; move(); });
+
+    let startX = 0;
+    let currentX = 0;
+    let isTouching = false;
+
+    track.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        startX = e.touches[0].clientX;
+        currentX = startX;
+        isTouching = true;
+      }
+    }, { passive: true });
+
+    track.addEventListener('touchmove', (e) => {
+      if (isTouching && e.touches.length === 1) {
+        currentX = e.touches[0].clientX;
+      }
+    }, { passive: true });
+
+    track.addEventListener('touchend', () => {
+      if (!isTouching) return;
+      isTouching = false;
+      const diff = startX - currentX;
+      if (Math.abs(diff) > 40) {
+        if (diff > 0) {
+          idx += 1;
+        } else {
+          idx -= 1;
+        }
+        move();
+      }
+    });
 
     let rt;
     window.addEventListener('resize', () => {
@@ -136,7 +204,110 @@
     });
 
     layout();
-  });
+  };
+
+  const SPREADSHEET_ID = '1vvzzgFMQdXTiiaRBpdipx0NW9SfdMibIImVkCp6dym4';
+  const OPENSHEET_URL = `https://opensheet.elk.sh/${SPREADSHEET_ID}/1`;
+
+  const renderMembers = (data) => {
+    const container = $('#membersContainer');
+    if (!container) return;
+    if (!Array.isArray(data) || data.length === 0) return;
+
+    const grouped = {};
+    data.forEach((row) => {
+      const isAtivo = !row.ativo || String(row.ativo).trim().toUpperCase() === 'SIM';
+      if (!isAtivo) return;
+      const nome = row.nome ? String(row.nome).trim() : '';
+      if (!nome) return;
+
+      const categoria = (row.categoria && String(row.categoria).trim()) || 'Membros';
+      if (!grouped[categoria]) {
+        grouped[categoria] = [];
+      }
+      grouped[categoria].push({
+        nome,
+        cargo: row.cargo ? String(row.cargo).trim() : '',
+        foto: row.foto ? String(row.foto).trim() : ''
+      });
+    });
+
+    const categories = Object.keys(grouped);
+    if (categories.length === 0) return;
+
+    container.innerHTML = '';
+
+    categories.forEach((cat) => {
+      const members = grouped[cat];
+      const block = document.createElement('div');
+      block.className = 'carousel-block';
+      block.setAttribute('data-carousel', '');
+
+      const itemsHtml = members
+        .map((m) => {
+          const photoUrl = formatPhotoUrl(m.foto);
+          const photoMarkup = photoUrl
+            ? `<div class="member-photo"><img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(m.nome)}" loading="lazy" onerror="this.parentElement.style.display='none'" /></div>`
+            : '';
+          return `
+            <div class="carousel-item">
+              ${photoMarkup}
+              <div class="member-info">
+                <p class="member-name">${escapeHtml(m.nome)}</p>
+                <p class="member-role">${escapeHtml(m.cargo)}</p>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      block.innerHTML = `
+        <div class="carousel-head">
+          <h3 class="carousel-label">${escapeHtml(cat)}</h3>
+          <div class="carousel-nav">
+            <button type="button" class="carousel-btn" data-prev aria-label="Anterior">
+              <img src="assets/icons/seta-halftone.png" alt="" draggable="false" />
+            </button>
+            <button type="button" class="carousel-btn" data-next aria-label="Próximo">
+              <img src="assets/icons/seta-halftone.png" alt="" draggable="false" />
+            </button>
+          </div>
+        </div>
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+            ${itemsHtml}
+          </div>
+        </div>
+        <div class="carousel-dots" aria-hidden="true"></div>
+      `;
+
+      container.appendChild(block);
+      initCarousel(block);
+    });
+  };
+
+  const loadMembers = async () => {
+    const container = $('#membersContainer');
+    try {
+      const response = await fetch(OPENSHEET_URL);
+      if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+      const data = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        renderMembers(data);
+      } else {
+        if (container) {
+          container.innerHTML = '<p class="members-loading">Nenhum membro encontrado na planilha.</p>';
+        }
+      }
+    } catch (err) {
+      console.warn('Erro ao carregar membros via OpenSheet:', err);
+      if (container) {
+        container.innerHTML = '<p class="members-loading">Não foi possível carregar a equipe no momento.</p>';
+      }
+    }
+  };
+
+  loadMembers();
 
   const eventsPages = $$('.events-page');
   const eventsToggle = $('#eventsToggle');
