@@ -207,7 +207,7 @@
   };
 
   const SPREADSHEET_ID = '1vvzzgFMQdXTiiaRBpdipx0NW9SfdMibIImVkCp6dym4';
-  const OPENSHEET_URL = `https://opensheet.elk.sh/${SPREADSHEET_ID}/1`;
+  const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=1`;
 
   const renderMembers = (data) => {
     const container = $('#membersContainer');
@@ -286,21 +286,52 @@
     });
   };
 
+  const parseSpreadsheet = (data) => {
+    const rows = ((data && data.table && data.table.rows) || []).map(
+      (row) => (row.c || []).map((cell) => (cell ? cell.v : null))
+    );
+    if (!rows.length) return [];
+    const header = rows[0].map((v) => String(v || '').trim());
+    return rows.slice(1).map((row) => {
+      const obj = {};
+      header.forEach((name, i) => { obj[name] = row[i] != null ? String(row[i]) : ''; });
+      return obj;
+    });
+  };
+
+  const loadSpreadsheet = () => new Promise((resolve, reject) => {
+    const g = window.google = window.google || {};
+    g.visualization = g.visualization || {};
+    g.visualization.Query = g.visualization.Query || {};
+    const cleanup = () => {
+      delete g.visualization.Query.setResponse;
+      script.remove();
+    };
+    g.visualization.Query.setResponse = (resp) => {
+      cleanup();
+      resolve(resp);
+    };
+    const script = document.createElement('script');
+    script.src = GVIZ_URL;
+    script.async = true;
+    script.onerror = () => {
+      cleanup();
+      reject(new Error('Falha ao carregar a planilha'));
+    };
+    document.head.appendChild(script);
+  });
+
   const loadMembers = async () => {
     const container = $('#membersContainer');
     try {
-      const response = await fetch(OPENSHEET_URL);
-      if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-      const data = await response.json();
+      const data = parseSpreadsheet(await loadSpreadsheet());
       if (Array.isArray(data) && data.length > 0) {
         renderMembers(data);
-      } else {
-        if (container) {
-          container.innerHTML = '<p class="members-loading">Nenhum membro encontrado na planilha.</p>';
-        }
+      } else if (container) {
+        container.innerHTML = '<p class="members-loading">Nenhum membro encontrado na planilha.</p>';
       }
     } catch (err) {
-      console.warn('Erro ao carregar membros via OpenSheet:', err);
+      console.warn('Erro ao carregar membros:', err);
       if (container) {
         container.innerHTML = '<p class="members-loading">Não foi possível carregar a equipe no momento.</p>';
       }
