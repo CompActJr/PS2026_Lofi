@@ -22,6 +22,15 @@
   );
   $$('a', mobileMenu).forEach((a) => a.addEventListener('click', () => toggleMenu(false)));
 
+  $$('a[href^="#"]').forEach((a) =>
+    a.addEventListener('click', (e) => {
+      const target = $(a.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    })
+  );
+
   const revealEls = $$('.reveal');
   revealEls.forEach((el) => {
     const delay = el.dataset.delay || '0';
@@ -165,37 +174,43 @@
     if (prev) prev.addEventListener('click', () => { idx -= 1; move(); });
     if (next) next.addEventListener('click', () => { idx += 1; move(); });
 
+    const stepPx = () => (track.offsetWidth + GAP_REM * 16) / visible;
+
     let startX = 0;
-    let currentX = 0;
-    let isTouching = false;
+    let dragX = 0;
+    let dragging = false;
 
-    track.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) {
-        startX = e.touches[0].clientX;
-        currentX = startX;
-        isTouching = true;
-      }
-    }, { passive: true });
-
-    track.addEventListener('touchmove', (e) => {
-      if (isTouching && e.touches.length === 1) {
-        currentX = e.touches[0].clientX;
-      }
-    }, { passive: true });
-
-    track.addEventListener('touchend', () => {
-      if (!isTouching) return;
-      isTouching = false;
-      const diff = startX - currentX;
-      if (Math.abs(diff) > 40) {
-        if (diff > 0) {
-          idx += 1;
-        } else {
-          idx -= 1;
-        }
-        move();
-      }
+    track.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      startX = e.clientX;
+      dragX = 0;
+      track.setPointerCapture(e.pointerId);
+      track.classList.add('dragging');
     });
+
+    track.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const step = stepPx();
+      const max = Math.max(0, items.length - visible);
+      const raw = e.clientX - startX;
+      dragX = Math.max(-(max - idx) * step, Math.min(idx * step, raw));
+      track.style.transform = `translateX(calc(-${idx} * ((100% + ${GAP_REM}rem) / ${visible}))) translateX(${dragX}px)`;
+    });
+
+    const endDrag = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      track.classList.remove('dragging');
+      try { track.releasePointerCapture(e.pointerId); } catch (err) { }
+      const step = stepPx();
+      const max = Math.max(0, items.length - visible);
+      const next = Math.max(0, Math.min(max, idx - Math.round(dragX / step)));
+      if (next !== idx) idx = next;
+      move();
+    };
+
+    track.addEventListener('pointerup', endDrag);
+    track.addEventListener('pointercancel', endDrag);
 
     let rt;
     window.addEventListener('resize', () => {
@@ -247,7 +262,7 @@
         .map((m) => {
           const photoUrl = formatPhotoUrl(m.foto);
           const photoMarkup = photoUrl
-            ? `<div class="member-photo"><img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(m.nome)}" loading="lazy" onerror="this.parentElement.style.display='none'" /></div>`
+            ? `<div class="member-photo"><img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(m.nome)}" draggable="false" loading="lazy" onerror="this.parentElement.style.display='none'" /></div>`
             : '';
           return `
             <div class="carousel-item">
