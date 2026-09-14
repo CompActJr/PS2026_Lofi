@@ -206,7 +206,7 @@
             </div>
 
             <div class="form-card">
-              <form id="contactForm" class="contact-form" novalidate>
+              <form id="contactForm" class="contact-form" action="https://formsubmit.co/movaej@gmail.com" method="POST" novalidate>
                 <div class="form-field">
                   <label for="f-name">Seu nome</label>
                   <input type="text" id="f-name" name="name" placeholder="Ana Paula Souza" required />
@@ -219,6 +219,7 @@
                   <label for="f-message">Mensagem</label>
                   <textarea id="f-message" name="message" rows="5" placeholder="Ex.: programa de ginástica laboral para 50 colaboradores em Porto Alegre." required></textarea>
                 </div>
+                <p class="form-error" id="formError" hidden></p>
                 <button type="submit" class="submit-btn">Enviar Mensagem</button>
               </form>
 

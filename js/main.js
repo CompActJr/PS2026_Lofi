@@ -653,16 +653,46 @@
   const contactForm = $('#contactForm');
   const successBox = $('#successBox');
   const resetFormBtn = $('#resetForm');
+  const formError = $('#formError');
 
-  contactForm.addEventListener('submit', (e) => {
+  contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    contactForm.hidden = true;
-    successBox.hidden = false;
+    formError.hidden = true;
+    const name = contactForm.elements.name.value.trim();
+    const email = contactForm.elements.email.value.trim();
+    const message = contactForm.elements.message.value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!name || !emailOk || !message) {
+      formError.textContent = 'Preencha nome, e-mail válido e mensagem.';
+      formError.hidden = false;
+      return;
+    }
+    const submitBtn = contactForm.querySelector('.submit-btn');
+    submitBtn.disabled = true;
+    const original = submitBtn.textContent;
+    submitBtn.textContent = 'Enviando...';
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/movaej@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ name, email, message, _subject: 'Contato pelo site da MOVA' })
+      });
+      if (!res.ok) throw new Error();
+      successBox.hidden = false;
+      contactForm.hidden = true;
+    } catch {
+      formError.textContent = 'Não foi possível enviar. Tente novamente em instantes.';
+      formError.hidden = false;
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = original;
+    }
   });
 
   resetFormBtn.addEventListener('click', () => {
     contactForm.reset();
     contactForm.hidden = false;
     successBox.hidden = true;
+    formError.hidden = true;
   });
 })();

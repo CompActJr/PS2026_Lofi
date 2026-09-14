@@ -717,6 +717,18 @@ body::before {
   transition: background 0.2s;
 }
 
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.form-error {
+  font-family: var(--font-aux);
+  font-size: 0.875rem;
+  color: #ffb3a7;
+  margin: 0 0 1rem;
+}
+
 .submit-btn:hover { background: #fff; }
 
 .success-box {
