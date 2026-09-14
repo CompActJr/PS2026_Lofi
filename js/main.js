@@ -386,8 +386,13 @@
       desc: 'Evento organizado pelo CA FISIO UFCSPA.',
       images: [
         'assets/images/eventos/jornada/jornada-1.jpg',
-        'assets/images/eventos/jornada/jornada-2.jpg',
+        'assets/images/eventos/jornada/jornada-2.JPG',
         'assets/images/eventos/jornada/jornada-3.jpg',
+        'assets/images/eventos/jornada/jornada-4.jpg',
+        'assets/images/eventos/jornada/jornada-5.mp4',
+        'assets/images/eventos/jornada/jornada-6.mp4',
+        'assets/images/eventos/jornada/jornada-7.mp4',
+        'assets/images/eventos/jornada/jornada-8.jpg',
       ],
     },
     acolhe: {
@@ -396,8 +401,12 @@
       desc: 'Evento organizado pela UFCSPA.',
       images: [
         'assets/images/eventos/acolhe/acolhe-1.jpg',
-        'assets/images/eventos/acolhe/acolhe-2.jpg',
-        'assets/images/eventos/acolhe/acolhe-3.jpg',
+        'assets/images/eventos/acolhe/acolhe-2.mp4',
+        'assets/images/eventos/acolhe/acolhe-3.mp4',
+        'assets/images/eventos/acolhe/acolhe-4.jpg',
+        'assets/images/eventos/acolhe/acolhe-5.jpg',
+        'assets/images/eventos/acolhe/acolhe-6.jpg',
+        'assets/images/eventos/acolhe/acolhe-7.jpg',
       ],
     },
     'volta-ao-jogo': {
@@ -405,9 +414,14 @@
       title: 'De Volta ao Jogo',
       desc: 'Minicurso de organização MOVA.',
       images: [
-        'assets/images/eventos/volta-ao-jogo/volta-ao-jogo-1.jpg',
-        'assets/images/eventos/volta-ao-jogo/volta-ao-jogo-2.jpg',
+        'assets/images/eventos/volta-ao-jogo/volta-ao-jogo-1.JPG',
+        'assets/images/eventos/volta-ao-jogo/volta-ao-jogo-2.JPG',
         'assets/images/eventos/volta-ao-jogo/volta-ao-jogo-3.jpg',
+        'assets/images/eventos/volta-ao-jogo/volta-ao-jogo-4.MP4',
+        'assets/images/eventos/volta-ao-jogo/volta-ao-jogo-5.MP4',
+        'assets/images/eventos/volta-ao-jogo/volta-ao-jogo-6.MP4',
+        'assets/images/eventos/volta-ao-jogo/volta-ao-jogo-7.JPG',
+        'assets/images/eventos/volta-ao-jogo/volta-ao-jogo-8.jpg',
       ],
     },
     'ponto-de-partida': {
@@ -418,6 +432,11 @@
         'assets/images/eventos/ponto-de-partida/ponto-de-partida-1.jpg',
         'assets/images/eventos/ponto-de-partida/ponto-de-partida-2.jpg',
         'assets/images/eventos/ponto-de-partida/ponto-de-partida-3.jpg',
+        'assets/images/eventos/ponto-de-partida/ponto-de-partida-4.mp4',
+        'assets/images/eventos/ponto-de-partida/ponto-de-partida-5.mp4',
+        'assets/images/eventos/ponto-de-partida/ponto-de-partida-6.mp4',
+        'assets/images/eventos/ponto-de-partida/ponto-de-partida-7.jpg',
+        'assets/images/eventos/ponto-de-partida/ponto-de-partida-8.jpg',
       ],
     },
     'maratona-poa': {
@@ -425,9 +444,12 @@
       title: 'Maratona Internacional de Porto Alegre',
       desc: 'Participação da MOVA com recovery esportivo.',
       images: [
-        'assets/images/eventos/maratona-poa/maratona-poa-1.jpg',
-        'assets/images/eventos/maratona-poa/maratona-poa-2.jpg',
+        'assets/images/eventos/maratona-poa/maratona-poa-1.JPG',
+        'assets/images/eventos/maratona-poa/maratona-poa-2.mp4',
         'assets/images/eventos/maratona-poa/maratona-poa-3.jpg',
+        'assets/images/eventos/maratona-poa/maratona-poa-4.jpg',
+        'assets/images/eventos/maratona-poa/maratona-poa-5.jpg',
+        'assets/images/eventos/maratona-poa/maratona-poa-6.jpg',
       ],
     },
     'nb-42k': {
@@ -437,7 +459,10 @@
       images: [
         'assets/images/eventos/nb-42k/nb-42k-1.jpg',
         'assets/images/eventos/nb-42k/nb-42k-2.jpg',
-        'assets/images/eventos/nb-42k/nb-42k-3.jpg',
+        'assets/images/eventos/nb-42k/nb-42k-3.mp4',
+        'assets/images/eventos/nb-42k/nb-42k-4.mp4',
+        'assets/images/eventos/nb-42k/nb-42k-5.mp4',
+        'assets/images/eventos/nb-42k/nb-42k-6.jpg',
       ],
     },
     caminhos: {
@@ -448,6 +473,7 @@
         'assets/images/eventos/caminhos/caminhos-1.jpg',
         'assets/images/eventos/caminhos/caminhos-2.jpg',
         'assets/images/eventos/caminhos/caminhos-3.jpg',
+        'assets/images/eventos/caminhos/caminhos-4.jpg',
       ],
     },
     'run-parkinsons': {
@@ -456,8 +482,10 @@
       desc: 'Organização e promoção do SESC Azenha, com participação da MOVA em recovery esportivo.',
       images: [
         'assets/images/eventos/run-parkinsons/run-parkinsons-1.jpg',
-        'assets/images/eventos/run-parkinsons/run-parkinsons-2.jpg',
-        'assets/images/eventos/run-parkinsons/run-parkinsons-3.jpg',
+        'assets/images/eventos/run-parkinsons/run-parkinsons-2.mp4',
+        'assets/images/eventos/run-parkinsons/run-parkinsons-3.mp4',
+        'assets/images/eventos/run-parkinsons/run-parkinsons-4.jpg',
+        'assets/images/eventos/run-parkinsons/run-parkinsons-5.jpg',
       ],
     },
   };
@@ -482,14 +510,27 @@
     $$('.modal-dot', modalDots).forEach((d, k) => d.classList.toggle('active', k === modalIndex));
     modalCounter.textContent = `${modalIndex + 1} / ${total}`;
     modalNavs.forEach((nav) => { nav.disabled = total <= 1; });
+    syncMedia();
   };
 
-  const gallery = (imgs) => {
-    modalTrack.innerHTML = imgs
-      .map((src, i) => `<img class="modal-slide" src="${src}" alt="" draggable="false" data-i="${i}" />`)
+  const isVideo = (src) => (/\.(mp4|webm|ogg|mov)(\?|#|$)/i).test(src.split(/[?#]/)[0]);
+
+  const syncMedia = () => {
+    $$('video.modal-slide', modalTrack).forEach((v) => v.pause());
+    const cur = modalTrack.children[modalIndex];
+    if (cur && cur.tagName === 'VIDEO') {
+      cur.play().catch(() => { });
+    }
+  };
+
+  const gallery = (media) => {
+    modalTrack.innerHTML = media
+      .map((src, i) => isVideo(src)
+        ? `<video class="modal-slide modal-video" src="${src}" data-i="${i}" controls muted playsinline preload="metadata" draggable="false"></video>`
+        : `<img class="modal-slide" src="${src}" alt="" draggable="false" data-i="${i}" />`)
       .join('');
-    modalDots.innerHTML = imgs
-      .map((_, i) => `<button type="button" class="modal-dot" data-i="${i}" aria-label="Imagem ${i + 1}"></button>`)
+    modalDots.innerHTML = media
+      .map((_, i) => `<button type="button" class="modal-dot" data-i="${i}" aria-label="${isVideo(media[i]) ? 'Vídeo' : 'Imagem'} ${i + 1}"></button>`)
       .join('');
     $$('.modal-dot', modalDots).forEach((d) =>
       d.addEventListener('click', () => goTo(Number(d.dataset.i)))
@@ -498,6 +539,7 @@
   };
 
   const closeModal = () => {
+    $$('video.modal-slide', modalTrack).forEach((v) => v.pause());
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
@@ -508,9 +550,9 @@
     const ev = EVENTS[key];
     if (!ev) return;
     lastFocus = document.activeElement;
-    gallery(ev.images);
+    gallery(ev.images.slice(0, 10));
     const alt = ev.title;
-    $$('.modal-slide', modalTrack).forEach((img) => { img.alt = alt; });
+    $$('img.modal-slide', modalTrack).forEach((img) => { img.alt = alt; });
     modalTag.textContent = ev.tag;
     modalTitle.textContent = ev.title;
     modalDesc.textContent = ev.desc;

@@ -1151,13 +1151,13 @@ body::before {
 }
 
 .member-photo {
-  width: 4rem;
-  height: 4rem;
+  width: 6rem;
+  height: 6rem;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid rgba(158, 242, 132, 0.4);
   background: var(--navy);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
   flex-shrink: 0;
 }
 
@@ -1494,6 +1494,12 @@ body::before {
   user-select: none;
 }
 
+.modal-video {
+  object-fit: contain;
+  background: #000;
+  cursor: default;
+}
+
 .modal-nav {
   position: absolute;
   top: 50%;
@@ -1528,12 +1534,10 @@ body::before {
 .modal-next { right: 1rem; }
 
 .modal-dots {
-  position: absolute;
-  left: 50%;
-  bottom: 1rem;
-  transform: translateX(-50%);
   display: flex;
+  justify-content: center;
   gap: 0.5rem;
+  padding: 0.875rem 0 0;
 }
 
 .modal-dot {
